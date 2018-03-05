@@ -1,11 +1,13 @@
 package com.example.pmtios.poc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -27,13 +29,15 @@ public class CustomFoldersAdapter extends RecyclerView.Adapter<CustomFoldersAdap
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        ImageView iv_one,iv_two,iv_three,iv_four;
+        ImageView iv_one, iv_two, iv_three, iv_four;
         TextView tv_title;
+        LinearLayout ll_item;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             iv_one = itemView.findViewById(R.id.iv_one);
+            ll_item = itemView.findViewById(R.id.ll_item);
             iv_two = itemView.findViewById(R.id.iv_two);
             iv_three = itemView.findViewById(R.id.iv_three);
             iv_four = itemView.findViewById(R.id.iv_four);
@@ -51,10 +55,15 @@ public class CustomFoldersAdapter extends RecyclerView.Adapter<CustomFoldersAdap
     @Override
     public void onBindViewHolder(final CustomFoldersAdapter.MyViewHolder _holder, final int position) {
         final MyViewHolder holder = (MyViewHolder) _holder;
-        FolderItem item=itemsList.get(position);
+        final FolderItem item = itemsList.get(position);
 
         holder.tv_title.setText(item.getTitle());
-
+        holder.ll_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.startActivity(new Intent(mContext, CreateNewFolderActivity.class).putExtra("id", item.getId()).putExtra("images",item.getDraw_two()));
+            }
+        });
 //        int[] drawables=new int[]{R.drawable.dummy_1,R.drawable.dummy_2,R.drawable.dummy_1,R.drawable.dummy_2};
         Glide.with(mContext).load(item.getDraw_one()).into(_holder.iv_one);
         Glide.with(mContext).load(item.getDraw_two()).into(_holder.iv_two);

@@ -5,17 +5,28 @@ package com.example.pmtios.poc;
  */
 
 public class FolderItem {
-    int draw_one,draw_two,draw_three,draw_four;
+    int draw_one, draw_two, draw_three, draw_four;
     String title;
+    String id;
 
     public FolderItem setDrawables(int[] drawables) {
-        this.draw_one = draw_one;
-        this.draw_two = draw_two;
-        this.draw_three = draw_three;
-        this.draw_four = draw_four;
+        this.draw_one = drawables[0];
+        this.draw_two = drawables[1];
+        this.draw_three = drawables[2];
+        this.draw_four = drawables[3];
         return this;
     }
 
+
+
+    public String getId() {
+        return id;
+    }
+
+    public FolderItem setId(String id) {
+        this.id = id;
+        return this;
+    }
 
     public int getDraw_one() {
         return draw_one;

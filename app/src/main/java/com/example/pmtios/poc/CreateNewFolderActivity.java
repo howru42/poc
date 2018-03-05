@@ -3,6 +3,7 @@ package com.example.pmtios.poc;
 import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,11 +14,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,32 +32,138 @@ public class CreateNewFolderActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_VIDEO_DOCUMENT = 1;
     String imageEncoded;
     List<String> imagesEncodedList;
+    ArrayList<SelectedImageItem> selectedImageItems;
+    RecyclerView rv_items;
+    SelectedImagesCustomAdapter selectedImagesCustomAdapter;
+    EditText folderName;
+    JSONArray selectedDrawables;
+    String id;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_folder);
-        getGalleryItems();
+        folderName = findViewById(R.id.editText);
+        selectedDrawables = new JSONArray();
+        preferences = getSharedPreferences("images", MODE_PRIVATE);
+
+        if (getIntent() != null)
+            id = getIntent().getStringExtra("id");
+//        getGalleryItems();
+        rv_items = findViewById(R.id.rv_items);
+        rv_items.setLayoutManager(new GridLayoutManager(this, 3));
+        selectedImageItems = new ArrayList<>();
+        selectedImagesCustomAdapter = new SelectedImagesCustomAdapter(CreateNewFolderActivity.this, selectedImageItems);
+        rv_items.setAdapter(selectedImagesCustomAdapter);
+        findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (folderName.getText().toString().trim().length() == 0) {
+                    Toast.makeText(CreateNewFolderActivity.this, "Folder name mandatory", Toast.LENGTH_SHORT).show();
+                } else if (selectedItemsCount() == 0) {
+                    Toast.makeText(CreateNewFolderActivity.this, "Please select at least one image", Toast.LENGTH_SHORT).show();
+                } else {
+                    JSONObject object = new JSONObject();
+                    try {
+                        object.put("name", folderName.getText().toString());
+                        object.put("values", selectedDrawables.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (id == null)
+                        id = String.valueOf(System.currentTimeMillis() % 1000);
+                    preferences.edit().putString(id, object.toString()).commit();
+
+                    finish();
+                }
+            }
+        });
+        getItems();
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.create_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.app_bar_add:
-                getGalleryItems();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    private int selectedItemsCount() {
+        int i = 0;
+        for (SelectedImageItem imageItem : selectedImageItems) {
+            if (imageItem.isSelected()) {
+                i++;
+                selectedDrawables.put(imageItem.getImageDrawable());
+            }
         }
-
+        return i;
     }
+
+    private void getItems() {
+
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_1).setImgName("Picture 1"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_2).setImgName("Picture 2"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_3).setImgName("Picture 3"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_4).setImgName("Picture 4"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_5).setImgName("Picture 5"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_6).setImgName("Picture 6"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_7).setImgName("Picture 7"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_8).setImgName("Picture 8"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_9).setImgName("Picture 9"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_10).setImgName("Picture 10"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_11).setImgName("Picture 11"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_12).setImgName("Picture 12"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_13).setImgName("Picture 13"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_14).setImgName("Picture 14"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_15).setImgName("Picture 15"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_16).setImgName("Picture 16"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_17).setImgName("Picture 17"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_18).setImgName("Picture 18"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_19).setImgName("Picture 19"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_20).setImgName("Picture 20"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_21).setImgName("Picture 21"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_22).setImgName("Picture 22"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_23).setImgName("Picture 23"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_24).setImgName("Picture 24"));
+        selectedImageItems.add(new SelectedImageItem().setImageDrawable(R.drawable.pic_25).setImgName("Picture 25"));
+
+        if (id != null) {
+
+            try {
+                JSONObject json = new JSONObject(preferences.getString(id, ""));
+                folderName.setText(json.getString("name"));
+                JSONArray items = new JSONArray(json.getString("values"));
+                ArrayList<Integer> arrayList = new ArrayList();
+                for (int i = 0; i < items.length(); i++) {
+                    arrayList.add(Integer.parseInt(items.getString(i)));
+                }
+                for (int i = 0; i < selectedImageItems.size(); i++) {
+                    SelectedImageItem item = selectedImageItems.get(i);
+                    item.setSelected(arrayList.contains(item.getImageDrawable()));
+                    selectedImageItems.set(i, item);
+                }
+                Log.e("Size", selectedImageItems.size() + "");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.create_menu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.app_bar_add:
+////                getGalleryItems();
+//                getItems();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//
+//    }
 
     public void getGalleryItems() {
 

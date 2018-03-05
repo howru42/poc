@@ -48,17 +48,19 @@ public class SelectedImagesCustomAdapter extends RecyclerView.Adapter<SelectedIm
     @Override
     public void onBindViewHolder(final SelectedImagesCustomAdapter.MyViewHolder _holder, final int position) {
         final MyViewHolder holder = (MyViewHolder) _holder;
-        SelectedImageItem item = itemsList.get(position);
+        final SelectedImageItem item = itemsList.get(position);
 
         holder.tv_item.setText(item.getImgName());
-        Glide.with(mContext).load(item.getImgUrl()).into(_holder.iv_item);
-        holder.iv_cancel.setOnClickListener(new View.OnClickListener() {
+        Glide.with(mContext).load(item.getImageDrawable()).into(_holder.iv_item);
+        holder.iv_cancel.setVisibility(item.isSelected() ? View.VISIBLE : View.INVISIBLE);
+        holder.iv_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemsList.remove(position);
+                item.setSelected(!item.isSelected());
                 notifyDataSetChanged();
             }
         });
+
 
     }
 
